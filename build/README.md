@@ -28,7 +28,111 @@ docker compose version
 
 ---
 
-## Step 1 – Build and start the server
+### 📥 Getting the Hytale Server binaries (Hytale Downloader CLI)
+
+The official Hytale documentation recommends using the **Hytale Downloader CLI** to obtain the required server files.
+
+You can download it here:
+[https://downloader.hytale.com/hytale-downloader.zip](https://downloader.hytale.com/hytale-downloader.zip)
+(Official guide: [https://support.hytale.com/hc/en-us/articles/45326769420827-Hytale-Server-Manual#server-setup](https://support.hytale.com/hc/en-us/articles/45326769420827-Hytale-Server-Manual#server-setup))
+
+---
+
+### Step 1 – Download and extract the CLI
+
+1. Download the file:
+
+   ```text
+   hytale-downloader.zip
+   ```
+2. Extract it somewhere on your machine.
+3. Open a terminal in that folder.
+
+---
+
+### Step 2 – Run the downloader
+
+Make the file executable (Linux / macOS):
+
+```bash
+chmod +x hytale-downloader
+```
+
+Run the CLI:
+
+```bash
+./hytale-downloader
+```
+
+> On Windows, you can simply run:
+>
+> ```powershell
+> hytale-downloader.exe
+> ```
+
+---
+
+### Step 3 – Generated files
+
+After running the downloader, it will generate a **.zip file** containing the Hytale server files.
+
+From that archive, you must extract the following **three files**:
+
+```
+Assets.zip
+Server/HytaleServer.jar
+Server/HytaleServer.aot
+```
+
+---
+
+## 📁 Required folder structure
+
+For the **local build to work**, these files **must be placed** inside the repository at:
+
+```
+build/Server/
+```
+
+### Final structure example
+
+```text
+repo-root/
+├─ build/
+│  ├─ Dockerfile
+│  ├─ docker-compose.yml
+│  └─ Server/
+│     ├─ Assets.zip
+│     ├─ HytaleServer.jar
+│     └─ HytaleServer.aot
+```
+
+---
+
+## ⚠️ Important
+
+* If **any** of these files are missing:
+
+  * `Assets.zip`
+  * `HytaleServer.jar`
+  * `HytaleServer.aot`
+
+  the **Docker build will fail**.
+
+* Make sure:
+
+  * File names match exactly
+  * They are inside `build/Server/`
+  * Not in the repository root
+  * Not inside `build/` directly
+
+---
+
+Your image will now be built using the official Hytale server binaries.
+
+---
+
+## Step 4 – Build and start the server
 
 In the directory that contains your `docker-compose.yml` and `Dockerfile`, run:
 
@@ -44,7 +148,7 @@ This will:
 
 ---
 
-## Step 2 – Check if the container is running
+## Step 5 – Check if the container is running
 
 ```bash
 docker ps
@@ -54,7 +158,7 @@ You should see `hytale-server-local` with status `Up`.
 
 ---
 
-## Step 3 – Attach to the server console (first-time auth / troubleshooting)
+## Step 6 – Attach to the server console (first-time auth / troubleshooting)
 
 ### Option A (recommended): enable interactive console in Compose
 
@@ -86,7 +190,7 @@ docker attach hytale-server-local
 
 ---
 
-## Step 4 – Authenticate in the server console
+## Step 7 – Authenticate in the server console
 
 Inside the container console, run:
 
@@ -99,7 +203,7 @@ Follow the authentication instructions printed by the server.
 
 ---
 
-## Step 5 – Detach from the container (WITHOUT stopping it)
+## Step 8 – Detach from the container (WITHOUT stopping it)
 
 To leave the container **without shutting it down**, use one of the following key combinations:
 
@@ -119,7 +223,7 @@ CTRL + Z
 
 ---
 
-## Step 6 – How to join the server
+## Step 9 – How to join the server
 
 Your Compose file exposes:
 
@@ -154,7 +258,7 @@ Examples:
 
 ---
 
-## Step 7 – Basic management
+## Step 10 – Basic management
 
 ### View logs
 
