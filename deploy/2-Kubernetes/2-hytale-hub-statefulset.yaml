@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hytale-hub
+  namespace: hytale
+spec:
+  serviceName: hytale-hub
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hytale
+      role: hub
+  template:
+    metadata:
+      labels:
+        app: hytale
+        role: hub
+    spec:
+      terminationGracePeriodSeconds: 120
+      ## Uncomment the following lines if you need to pull from a private registry
+      # imagePullSecrets:
+      #   - name: ghcr-auth
+      containers:
+        - name: hytale
+          image: ghcr.io/logikoz/hytale-server:latest
+          imagePullPolicy: IfNotPresent
+
+          stdin: true
+          tty: true
+
+          ports:
+            - containerPort: 5520
+              protocol: UDP
+
+          env:
+            - name: JAVA_OPTS
+              value: >
+                -Djava.net.preferIPv4Stack=true
+                -Djava.net.preferIPv4Addresses=true
+                -Xms8G
+                -Xmx8G
+                -XX:+UseG1GC
+                -XX:MaxGCPauseMillis=50
+                -XX:+AlwaysPreTouch
+
+          volumeMounts:
+            - name: hytale-data
+              mountPath: /hytale/data
+
+          resources:
+            requests:
+              cpu: "2"
+              memory: "8Gi"
+            limits:
+              cpu: "4"
+              memory: "12Gi"
+
+  volumeClaimTemplates:
+    - metadata:
+        name: hytale-data
+      spec:
+        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi

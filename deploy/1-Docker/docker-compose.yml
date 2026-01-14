@@ -1,0 +1,40 @@
+services:
+  hytale-server:
+    image: ghcr.io/logikoz/hytale-server:latest
+    container_name: hytale-server
+
+    restart: unless-stopped
+
+    ########## FIRST TIME (OR SESSION UNAUTHENTICATED) SETUP INSTRUCTIONS #########
+    #IF docker attach hytale-server dont work,
+    #Uncomment to first access the container attached terminal
+    # then use "docker detach" to exit without stopping the container
+    # Or Ctrl-p + Ctrl-q
+
+    # stdin_open: true
+    # tty: true
+
+    ports:
+      - "5520:5520/udp"
+
+    environment:
+      JAVA_OPTS: >-
+        -Djava.net.preferIPv4Stack=true
+        -Djava.net.preferIPv4Addresses=true
+        -Xms6G
+        -Xmx6G
+      AOT_OPTS: >-
+        -XX:AOTCache=/hytale/data/HytaleServer.aot
+
+    volumes:
+      - ./data:/hytale/data
+
+    working_dir: /hytale/data
+
+    command: >
+      sh -lc "exec java $$JAVA_OPTS $$AOT_OPTS -jar /hytale/HytaleServer.jar --assets /hytale/Assets.zip"
+
+    deploy:
+      resources:
+        limits:
+          memory: 6G
