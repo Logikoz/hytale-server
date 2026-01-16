@@ -26,12 +26,6 @@ In the directory that contains `docker-compose.yml`, run:
 docker compose up -d
 ```
 
-This will:
-
-* Pull `ghcr.io/logikoz/hytale-server:latest`
-* Create the container `hytale-server`
-* Run the server in the background
-
 ---
 
 ## Step 2 – Check if the container is running

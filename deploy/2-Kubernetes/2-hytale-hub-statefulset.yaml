@@ -17,12 +17,14 @@ spec:
         role: hub
     spec:
       terminationGracePeriodSeconds: 120
-      ## Uncomment the following lines if you need to pull from a private registry
+
+      # Uncomment if you need to pull from a private registry
       # imagePullSecrets:
       #   - name: ghcr-auth
+
       containers:
         - name: hytale
-          image: ghcr.io/logikoz/hytale-server:latest
+          image: ghcr.io/logikoz/hytale-server:v1.1-beta
           imagePullPolicy: IfNotPresent
 
           stdin: true
@@ -31,6 +33,9 @@ spec:
           ports:
             - containerPort: 5520
               protocol: UDP
+
+          # Run the server from the persistent volume directory so all generated files are stored in the PVC
+          workingDir: /hytale
 
           env:
             - name: JAVA_OPTS
@@ -42,10 +47,20 @@ spec:
                 -XX:+UseG1GC
                 -XX:MaxGCPauseMillis=50
                 -XX:+AlwaysPreTouch
+            # Store AOT cache in the PVC as well
+            - name: AOT_OPTS
+              value: "-XX:AOTCache=/hytale/HytaleServer.aot"
+
+          # Override the command to ensure the jar/assets are loaded from /opt/hytale
+          # while the working directory (and generated data) stays in /hytale (PVC)
+          command: ["/bin/sh", "-lc"]
+          args:
+            - |
+              exec java $JAVA_OPTS $AOT_OPTS -jar /opt/hytale/HytaleServer.jar --assets /opt/hytale/Assets.zip
 
           volumeMounts:
             - name: hytale-data
-              mountPath: /hytale/data
+              mountPath: /hytale
 
           resources:
             requests:

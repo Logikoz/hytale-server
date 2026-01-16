@@ -3,7 +3,7 @@ services:
     container_name: hytale-server-local
     build: .
     restart: unless-stopped
-
+    
     # ######### FIRST TIME SETUP INSTRUCTIONS #########
     #IF docker attach hytale-server dont work,
     #Uncomment to first access the container attached terminal
@@ -15,11 +15,14 @@ services:
 
     ports:
       - "5520:5520/udp"
+
     volumes:
-      - ./data:/hytale/data
+      - ./data:/hytale
+
     environment:
       JAVA_OPTS: "-Xms6G -Xmx6G"
-      AOT_OPTS: "-XX:AOTCache=HytaleServer.aot"
+      AOT_OPTS: "-XX:AOTCache=/hytale/HytaleServer.aot"
+
     deploy:
       resources:
         limits:

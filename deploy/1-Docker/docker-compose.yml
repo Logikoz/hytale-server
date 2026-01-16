@@ -1,8 +1,7 @@
 services:
   hytale-server:
-    image: ghcr.io/logikoz/hytale-server:latest
+    image: ghcr.io/logikoz/hytale-server:v1.1-beta
     container_name: hytale-server
-
     restart: unless-stopped
 
     ########## FIRST TIME (OR SESSION UNAUTHENTICATED) SETUP INSTRUCTIONS #########
@@ -11,8 +10,8 @@ services:
     # then use "docker detach" to exit without stopping the container
     # Or Ctrl-p + Ctrl-q
 
-    # stdin_open: true
-    # tty: true
+    stdin_open: true
+    tty: true
 
     ports:
       - "5520:5520/udp"
@@ -23,16 +22,17 @@ services:
         -Djava.net.preferIPv4Addresses=true
         -Xms6G
         -Xmx6G
+
       AOT_OPTS: >-
-        -XX:AOTCache=/hytale/data/HytaleServer.aot
+        -XX:AOTCache=/hytale/HytaleServer.aot
 
     volumes:
-      - ./data:/hytale/data
+      - ./data:/hytale
 
-    working_dir: /hytale/data
-
-    command: >
-      sh -lc "exec java $$JAVA_OPTS $$AOT_OPTS -jar /hytale/HytaleServer.jar --assets /hytale/Assets.zip"
+    # The image already defines the correct CMD.
+    # Only uncomment this if you need to override it.
+    # command: >
+    #   sh -lc "exec java $$JAVA_OPTS $$AOT_OPTS -jar /opt/hytale/HytaleServer.jar --assets /opt/hytale/Assets.zip"
 
     deploy:
       resources:
